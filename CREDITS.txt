@@ -1,0 +1,9 @@
+Input Monitor Overlay - credits
+
+JetBrains Mono (Fonts/JetBrainsMono-Bold.ttf)
+  Copyright 2020 The JetBrains Mono Project Authors
+  SIL Open Font License 1.1 - see Fonts/OFL.txt
+  https://github.com/JetBrains/JetBrainsMono
+
+Icons/*.tga were made for this addon.
+Mouse pictures, the light, the lock and other interface art are the game's own, used in place.

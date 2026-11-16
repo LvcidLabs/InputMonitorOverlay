@@ -1,0 +1,7 @@
+# What the packager puts in the release zip: one folder named InputMonitorO (the name the
+# game loads it by), holding the addon. README is for GitHub.
+package-as: InputMonitorO
+
+ignore:
+  - .github
+  - README.md

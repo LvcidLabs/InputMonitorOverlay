@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: Input Monitor |cffffd100Overlay|r
+## Notes: A small overlay of every key and mouse button you press, with the time between them. /imo opens and closes it.
+## Author: Lvcid
+## Version: 1.0.0
+## SavedVariables: InputMonitorOverlayDB
+
+InputMonitorO.lua
