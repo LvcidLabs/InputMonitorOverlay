@@ -1,7 +1,13 @@
 # What the packager puts in the release zip: one folder named InputMonitorO (the name the
-# game loads it by), holding the addon. README is for GitHub.
+# game loads it by), holding the addon. README and CHANGELOG are for GitHub.
 package-as: InputMonitorO
+
+# The release notes shown on CurseForge and GitHub: CHANGELOG.md, written by hand for each release.
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
 
 ignore:
   - .github
   - README.md
+  - CHANGELOG.md
