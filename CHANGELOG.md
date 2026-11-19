@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Mouse buttons 6 and up (MMO mouse side buttons) now show as a numbered mouse in key mode, instead of a left click.
+- List mode now shows what mouse buttons and the scroll wheel are bound to.
+
 ## 1.0.0
 
 - First release.

@@ -43,8 +43,17 @@ local MODE_EDGE = { right = "left", left = "right", down = "top", up = "bottom" 
 
 local BARE_MODIFIERS = { LSHIFT = "SHIFT", RSHIFT = "SHIFT", LCTRL = "CTRL", RCTRL = "CTRL",
     LALT = "ALT", RALT = "ALT", LMETA = "META", RMETA = "META" }
-local MOUSE_NAMES = { LeftButton = "LMB", RightButton = "RMB", MiddleButton = "MMB",
-    Button4 = "MB4", Button5 = "MB5" }
+local MOUSE_NAMES = { LeftButton = "LMB", RightButton = "RMB", MiddleButton = "MMB" }
+-- Button4 and up (an MMO mouse reports its side buttons as Button6 and up, to Button31): MB4...
+local function MouseName(button)
+    return MOUSE_NAMES[button] or (tostring(button):gsub("^Button(%d+)$", "MB%1"))
+end
+-- The names key bindings use for the mouse: BUTTON1 (left), BUTTON2 (right), BUTTON3 (middle),
+-- then BUTTON4 and up.
+local BIND_NAMES = { LeftButton = "BUTTON1", RightButton = "BUTTON2", MiddleButton = "BUTTON3" }
+local function MouseBindName(button)
+    return BIND_NAMES[button] or tostring(button):upper()
+end
 
 local db
 local entries = {}  -- newest first: { key, action, at (GetTime), clock, delta }
@@ -254,8 +263,9 @@ end
 local MOD_LABEL = { CTRL = "Ctrl", ALT = "Alt" }
 -- The side buttons: the white mouse with a white 4 or 5 in its middle, on a small dark pill so
 -- it reads, and a red arc on the mouse's left edge for the button pressed (Icons/side_*.tga):
--- the upper one forward (5), the lower one back (4).
-local SIDE_LABEL = { MB4 = "4", MB5 = "5" }
+-- the upper one forward (5), the lower one back (4). Buttons 6 and up (an MMO mouse's extra
+-- side buttons): the same mouse and number, with no arc (where they sit differs by mouse).
+local function SideLabel(mouseName) return mouseName and mouseName:match("^MB(%d+)$") end
 local SIDE_ARC = { MB4 = "lower", MB5 = "upper" }
 local OTHER_ARC = { lower = "upper", upper = "lower" } -- the button not pressed: faded grey
 -- Long key names get the short labels printed on keyboards, so they stay readable.
@@ -746,7 +756,7 @@ local function RenderKeys(now, n)
                 local wheelTex = e.mouse and WHEEL_ICON[e.mouse]
                 local middle = e.mouse == "MMB"
                 local atlas = e.mouse and not wheelTex and (MOUSE_ATLAS[e.mouse] or plain)
-                local side = e.mouse and not middle and not MOUSE_ATLAS[e.mouse] and SIDE_LABEL[e.mouse]
+                local side = e.mouse and not middle and not MOUSE_ATLAS[e.mouse] and SideLabel(e.mouse)
                 local pictured = (atlas or wheelTex) and true or false
                 k.box:SetShown(not e.mouse)
                 k.icon:SetShown(pictured)
@@ -758,6 +768,7 @@ local function RenderKeys(now, n)
                 k.wheel:ClearAllPoints()
                 k.wheel:SetShown(middle and atlas and true or false)
                 k.pill:SetShown(side and atlas and true or false)
+                k.pill:SetWidth(side and #side > 1 and 13 or 8) -- (wider for 10 and up)
                 local arc = side and atlas and SIDE_ARC[e.mouse]
                 k.sideArc:SetShown(arc and true or false)
                 k.otherArc:SetShown(arc and true or false)
@@ -1479,8 +1490,8 @@ local mouse = CreateFrame("Frame")
 mouse:SetScript("OnEvent", function(_, _, button)
     if db.paused then return end
     local mods = Modifiers()
-    local name = MOUSE_NAMES[button] or tostring(button)
-    Push(mods .. name, BindingLabel(mods .. tostring(button)), name, mods)
+    local name = MouseName(button)
+    Push(mods .. name, BindingLabel(mods .. MouseBindName(button)), name, mods)
 end)
 
 -- The wheel. The game tells addons nothing about it (and catching it would stop the camera
@@ -1497,7 +1508,7 @@ local function Wheel(up)
         lastAt = now
         return
     end
-    Push(mods .. name, nil, name, mods)
+    Push(mods .. name, BindingLabel(mods .. "MOUSE" .. name), name, mods)
 end
 if CameraZoomIn then hooksecurefunc("CameraZoomIn", function() Wheel(true) end) end
 if CameraZoomOut then hooksecurefunc("CameraZoomOut", function() Wheel(false) end) end
